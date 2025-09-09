@@ -1,0 +1,24 @@
+{
+  "cliente": {
+    "nome": "Leandro Albertini",
+    "cpf": "12345678901",
+    "email": "leandro@example.com",
+    "telefone": "11999999999",
+    "dataNascimento": "1990-01-01",
+    "endereco": {
+      "cep": "01001000",
+      "numero": "100",
+      "complemento": "",
+      "referencia": ""
+    }
+  },
+  "certificado": {
+    "tipo": "e-CPF",
+    "produto": "A1",
+    "valor": 120.00
+  },
+  "pagamento": {
+    "tipo_preferido": "PIX",
+    "vencimento_boleto_dias": 3
+  }
+}

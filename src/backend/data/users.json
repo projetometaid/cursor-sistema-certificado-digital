@@ -1,0 +1,26 @@
+[
+  {
+    "id": "84bfee5d-2ca4-4905-93d5-9625f87bd69d",
+    "name": "Smoke",
+    "email": "smoke@example.com",
+    "passwordHash": "$2b$10$EnkWclBYIcTzM9G7xt4nJOarMelZoa0Wz7TZA.QHbPC/r2SoQFW6W"
+  },
+  {
+    "id": "481e1edc-8aa7-4e29-b84c-e43efe70e1e8",
+    "name": "Clean",
+    "email": "clean@example.com",
+    "passwordHash": "$2b$10$ZbRQ62I9uBog1KrhEXrrAewqGY4o7qKu4c3x185IJQDGr2gY7y0B2"
+  },
+  {
+    "id": "5664e499-c957-4603-95a3-01ae6e9bde1b",
+    "name": "Smoke",
+    "email": "smoke_1757424893130@example.com",
+    "passwordHash": "$2b$10$DFESlWVs.Lwp7ok28P2d1.l5NzAWQ.JWivnN/wzic7uX4N52xNklS"
+  },
+  {
+    "id": "2feb854a-118d-4f25-9846-e9d29facd44a",
+    "name": "Smoke",
+    "email": "smoke_1757436318254@example.com",
+    "passwordHash": "$2b$10$iYgQHeOemPH6pzBo/.mxXu9zvMUZapCihHoqHLZhA1iENUeKONqFa"
+  }
+]

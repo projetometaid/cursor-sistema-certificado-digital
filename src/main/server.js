@@ -1,0 +1,18 @@
+const express = require('express');
+const cors = require('cors');
+const { buildContainer } = require('./container');
+const buildAuthRouter = require('../interface/http/routes/auth');
+const buildOrdersRouter = require('../interface/http/routes/orders');
+const buildWebhooksRouter = require('../interface/http/routes/webhooks');
+const buildProtocolsRouter = require('../interface/http/routes/protocols');
+const container = buildContainer();
+const app = express();
+app.use(express.json({ limit:'1mb' }));
+app.use(cors({ origin: container.env.frontendOrigin || '*', credentials: true }));
+app.get('/health', (_req,res)=> res.json({ ok:true }));
+app.use('/auth', buildAuthRouter(container));
+app.use('/orders', buildOrdersRouter(container));
+app.use('/webhooks', buildWebhooksRouter(container));
+app.use('/protocols', buildProtocolsRouter());
+const port = container.env.apiPort || 3000;
+app.listen(port, ()=> console.log(`[API] http://localhost:${port}`));
