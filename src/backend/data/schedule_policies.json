@@ -32,5 +32,30 @@
   {
     "providerId": "f698916e-6b9b-47a7-9b9d-a04fc1bc2497",
     "enabled": true
+  },
+  {
+    "providerId": "notif",
+    "enabled": true,
+    "timezone": "America/Sao_Paulo",
+    "workingDays": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "shifts": [
+      {
+        "start": "09:00",
+        "end": "10:00"
+      }
+    ],
+    "slotDurationMinutes": 30,
+    "exceptions": {
+      "holidays": [],
+      "blocks": []
+    },
+    "maxConcurrentAppointments": 1,
+    "bookingWindowDays": 7
   }
 ]

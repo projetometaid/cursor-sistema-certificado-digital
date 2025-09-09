@@ -7,6 +7,7 @@ const SchedulePolicyRepositoryImpl = require('../infrastructure/repositories/Sch
 const AppointmentRepositoryImpl = require('../infrastructure/repositories/AppointmentRepositoryImpl');
 const HoldRepositoryImpl = require('../infrastructure/repositories/HoldRepositoryImpl');
 const LocalCalendarProvider = require('../infrastructure/calendar/LocalCalendarProvider');
+const SendGridEmailProvider = require('../infrastructure/notifications/SendGridEmailProvider');
 const RegisterUserUseCase = require('../core/usecases/RegisterUserUseCase');
 const LoginUseCase = require('../core/usecases/LoginUseCase');
 // Security services (new)
@@ -41,6 +42,7 @@ function buildContainer(){
   const appointmentRepository = new AppointmentRepositoryImpl();
   const holdRepository = new HoldRepositoryImpl();
   const calendarProvider = new LocalCalendarProvider();
+  const notificationPublisher = new SendGridEmailProvider({});
   const { createId } = require('../infrastructure/db/localStore');
   // Analytics wiring
   const { getEnv } = require('../shared/config/env');
@@ -63,13 +65,13 @@ function buildContainer(){
   const configureSchedulePolicy = ConfigureSchedulePolicyUseCase({ schedulePolicyRepository });
   const generateAvailability = GenerateAvailabilityUseCase({ schedulePolicyRepository, appointmentRepository, holdRepository });
   const listAvailability = ListAvailabilityUseCase({ availabilityGenerator: generateAvailability });
-  const bookAppointment = BookAppointmentUseCase({ schedulePolicyRepository, appointmentRepository, calendarProvider, idFactory: createId, holdRepository });
+  const bookAppointment = BookAppointmentUseCase({ schedulePolicyRepository, appointmentRepository, calendarProvider, idFactory: createId, holdRepository, notificationPublisher });
   const blockTime = BlockTimeUseCase({ schedulePolicyRepository });
   const setHolidays = SetHolidaysUseCase({ schedulePolicyRepository });
   const createHold = CreateHoldUseCase({ schedulePolicyRepository, appointmentRepository, holdRepository });
   const releaseHold = ReleaseHoldUseCase({ holdRepository });
   return { env, registerUser, loginUser, createOrder, listOrders, markOrderPaid, analytics,
-    authTokenService, userRepository,
+    authTokenService, userRepository, notificationPublisher,
     // scheduling
     enableSchedulingForUser, configureSchedulePolicy, generateAvailability, listAvailability, bookAppointment, blockTime, setHolidays,
     createHold, releaseHold,

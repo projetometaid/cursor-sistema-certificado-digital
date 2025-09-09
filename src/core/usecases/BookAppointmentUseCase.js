@@ -1,6 +1,7 @@
 const { rangesOverlap } = require('../../shared/utils/time');
+const AppointmentBookedEvent = require('../events/AppointmentBookedEvent');
 
-module.exports = function BookAppointmentUseCase({ schedulePolicyRepository, appointmentRepository, calendarProvider, idFactory, holdRepository }){
+module.exports = function BookAppointmentUseCase({ schedulePolicyRepository, appointmentRepository, calendarProvider, idFactory, holdRepository, notificationPublisher }){
   return {
     async execute({ providerId, customer, serviceId, startISO, endISO, holdId }){
       const policy = await schedulePolicyRepository.findByProviderId(providerId);
@@ -14,6 +15,21 @@ module.exports = function BookAppointmentUseCase({ schedulePolicyRepository, app
       await appointmentRepository.save(appt);
       try { await calendarProvider?.createEvent?.({ id, providerId, startISO, endISO, title: customer?.name || 'Atendimento' }); } catch(_){ }
       if(holdId && holdRepository){ try { await holdRepository.release(holdId); } catch(_){} }
+      try {
+        if(notificationPublisher){
+          const evt = AppointmentBookedEvent({ appointment: appt });
+          const to = customer?.email; if(to){
+            await notificationPublisher.publish('email', {
+              to,
+              subject: 'Seu agendamento está confirmado',
+              templateId: process.env.SENDGRID_TEMPLATE_BOOKED_ID,
+              variables: { name: customer?.name, startISO, endISO, providerId },
+              category: 'appointment',
+              customArgs: { appointmentId: appt.id }
+            }, { idempotencyKey: `${appt.id}-booked` });
+          }
+        }
+      } catch(_){ }
       return { ok:true, appointment: appt };
     }
   };

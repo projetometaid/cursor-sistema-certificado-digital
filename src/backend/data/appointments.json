@@ -18,5 +18,27 @@
     "startISO": "2025-09-10T11:30:00.000Z",
     "endISO": "2025-09-10T11:40:00.000Z",
     "status": "booked"
+  },
+  {
+    "id": "2bec605b-cef5-46e6-b966-c389fcda8eca",
+    "providerId": "notif",
+    "customer": {
+      "name": "Cliente",
+      "email": "sandbox@example.com"
+    },
+    "startISO": "2025-09-09T12:00:00.000Z",
+    "endISO": "2025-09-09T12:30:00.000Z",
+    "status": "booked"
+  },
+  {
+    "id": "36e0e556-46d2-4198-8623-6fba8a5e6582",
+    "providerId": "ana",
+    "customer": {
+      "name": "Leandro",
+      "email": "leandro.albertini@certificadocampinas.com.br"
+    },
+    "startISO": "2025-09-09T20:20:00.000Z",
+    "endISO": "2025-09-09T20:30:00.000Z",
+    "status": "booked"
   }
 ]
