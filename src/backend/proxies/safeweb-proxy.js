@@ -35,7 +35,7 @@ const SAFEWEB = {
   authUrl: process.env.SAFEWEB_AUTH_URL || 'https://pss.safewebpss.com.br/Service/Microservice/Shared/HubAutenticacao/Autenticacoes/api/autorizacao/token'
 };
 
-const APP = { port: Number(process.env.SAFEWEB_PROXY_PORT || 3003), host: '0.0.0.0' };
+const APP = { port: Number(process.env.SAFEWEB_PROXY_PORT || 3003), host: '127.0.0.1' };
 
 function reqHttps(options, bodyStr) {
   return new Promise((resolve, reject) => {
@@ -162,7 +162,6 @@ async function gerarProtocolo(payload, token) {
     const dataStr = JSON.stringify(p);
     try {
       console.log('[SAFEWEB][Add] Path:', addPath, 'Len:', dataStr.length);
-      console.log('[SAFEWEB][Add] Payload:', dataStr.slice(0, 2000));
     } catch (_) {}
     return reqHttps({
       hostname: SAFEWEB.baseHost,

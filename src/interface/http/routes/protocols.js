@@ -1,4 +1,5 @@
 const { Router } = require('express');
+const { z } = require('zod');
 
 // Usa integrações já existentes
 const integrations = require('../../../infrastructure/integrations/safeweb/protocolApis');
@@ -114,12 +115,21 @@ module.exports = function buildProtocolsRouter() {
   }
 
   // POST /protocols/ecpf → cpf, email, telefone, cep, numero, nome, dataNascimento?
+  const ecpfSchema = z.object({
+    cpf: z.string().min(11),
+    email: z.string().email(),
+    telefone: z.string().min(8),
+    cep: z.string().min(8),
+    numero: z.union([z.string(), z.number()]),
+    nome: z.string().min(1).optional(),
+    dataNascimento: z.string().optional()
+  });
+
   router.post('/ecpf', async (req, res) => {
     try {
-      const { cpf, email, telefone, cep, numero, nome, dataNascimento } = req.body || {};
-      if (!cpf || !email || !telefone || !cep || !numero) {
-        return res.status(400).json({ ok: false, error: 'cpf, email, telefone, cep, numero são obrigatórios' });
-      }
+      const parse = ecpfSchema.safeParse(req.body||{});
+      if(!parse.success) return res.status(400).json({ ok:false, error:'validation_error', details: parse.error.errors });
+      const { cpf, email, telefone, cep, numero, nome, dataNascimento } = parse.data;
 
       // 0) Verificar biometria primeiro
       const bio = await integrations.safeweb.validarBiometria(cpf);
@@ -259,12 +269,20 @@ module.exports = function buildProtocolsRouter() {
   });
 
   // POST /protocols/ecnpj → cnpj, cpfResponsavel, email, telefone, cepPessoa, numeroPessoa
+  const ecnpjSchema = z.object({
+    cnpj: z.string().min(14),
+    cpfResponsavel: z.string().min(11),
+    email: z.string().email(),
+    telefone: z.string().min(8),
+    cepPessoa: z.string().min(8),
+    numeroPessoa: z.union([z.string(), z.number()])
+  });
+
   router.post('/ecnpj', async (req, res) => {
     try {
-      const { cnpj, cpfResponsavel, email, telefone, cepPessoa, numeroPessoa } = req.body || {};
-      if (!cnpj || !cpfResponsavel || !email || !telefone || !cepPessoa || !numeroPessoa) {
-        return res.status(400).json({ ok: false, error: 'cnpj, cpfResponsavel, email, telefone, cepPessoa, numeroPessoa são obrigatórios' });
-      }
+      const parse = ecnpjSchema.safeParse(req.body||{});
+      if(!parse.success) return res.status(400).json({ ok:false, error:'validation_error', details: parse.error.errors });
+      const { cnpj, cpfResponsavel, email, telefone, cepPessoa, numeroPessoa } = parse.data;
 
       // 1) Dados da empresa (Provider consolidado: ReceitaWS → BrasilAPI)
       const { consultarCNPJ } = require('../../../infrastructure/integrations/externos/cnpjProvider');
@@ -336,12 +354,21 @@ module.exports = function buildProtocolsRouter() {
   });
 
   // POST /protocols/ecnpj/full → cpf, cnpj, cepPessoa, numeroPessoa, email, telefone, nome?
+  const ecnpjFullSchema = z.object({
+    cpf: z.string().min(11),
+    cnpj: z.string().min(14),
+    cepPessoa: z.string().min(8),
+    numeroPessoa: z.union([z.string(), z.number()]),
+    email: z.string().email(),
+    telefone: z.string().min(8),
+    nome: z.string().min(1).optional()
+  });
+
   router.post('/ecnpj/full', async (req, res) => {
     try {
-      const { cpf, cnpj, cepPessoa, numeroPessoa, email, telefone, nome } = req.body || {};
-      if (!cpf || !cnpj || !cepPessoa || !numeroPessoa || !email || !telefone) {
-        return res.status(400).json({ ok: false, error: 'cpf, cnpj, cepPessoa, numeroPessoa, email, telefone são obrigatórios' });
-      }
+      const parse = ecnpjFullSchema.safeParse(req.body||{});
+      if(!parse.success) return res.status(400).json({ ok:false, error:'validation_error', details: parse.error.errors });
+      const { cpf, cnpj, cepPessoa, numeroPessoa, email, telefone, nome } = parse.data;
 
       // 1) Biometria
       const bio = await integrations.safeweb.validarBiometria(cpf);
@@ -410,12 +437,17 @@ module.exports = function buildProtocolsRouter() {
   });
 
   // POST /protocols/consulta_previa_cnpj → cnpj, cpf, dataNascimento? → retorna status da RFB (representante legal)
+  const consultaPrevCnpjSchema = z.object({
+    cnpj: z.string().min(14),
+    cpf: z.string().min(11),
+    dataNascimento: z.string().optional()
+  });
+
   router.post('/consulta_previa_cnpj', async (req, res) => {
     try {
-      const { cnpj, cpf, dataNascimento } = req.body || {};
-      if (!cnpj || !cpf) {
-        return res.status(400).json({ ok: false, error: 'cnpj e cpf são obrigatórios' });
-      }
+      const parse = consultaPrevCnpjSchema.safeParse(req.body||{});
+      if(!parse.success) return res.status(400).json({ ok:false, error:'validation_error', details: parse.error.errors });
+      const { cnpj, cpf, dataNascimento } = parse.data;
 
       // normaliza/recupera data
       let dobISO = null;

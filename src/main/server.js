@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const { buildContainer } = require('./container');
 const buildAuthRouter = require('../interface/http/routes/auth');
 const buildOrdersRouter = require('../interface/http/routes/orders');
@@ -11,8 +13,11 @@ const buildHoldsRouter = require('../interface/http/routes/holds');
 const buildUsersRouter = require('../interface/http/routes/users');
 const container = buildContainer();
 const app = express();
+app.use(helmet());
 app.use(express.json({ limit:'1mb' }));
-app.use(cors({ origin: container.env.frontendOrigin || '*', credentials: true }));
+const allowedOrigin = container.env.frontendOrigin || 'http://localhost:5173';
+app.use(cors({ origin: allowedOrigin, credentials: true }));
+app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 1000 }));
 app.get('/health', (_req,res)=> res.json({ ok:true }));
 app.use('/auth', buildAuthRouter(container));
 app.use('/orders', buildOrdersRouter(container));
@@ -22,5 +27,13 @@ app.use('/schedules', buildSchedulesRouter(container));
 app.use('/appointments', buildAppointmentsRouter(container));
 app.use('/holds', buildHoldsRouter(container));
 app.use('/users', buildUsersRouter(container));
+// Serve admin static
+const path = require('path');
+const expressStatic = require('express');
+const adminDist = path.resolve(__dirname, '../../dist/admin');
+app.use('/admin', expressStatic.static(adminDist));
+app.get(/^\/admin(?:\/.*)?$/, (_req,res)=>{
+  res.sendFile(path.join(adminDist, 'index.html'));
+});
 const port = container.env.apiPort || 3000;
 app.listen(port, ()=> console.log(`[API] http://localhost:${port}`));

@@ -34,7 +34,7 @@ const assertiva = {
 
 const app = {
     port: process.env.ASSERTIVA_PROXY_PORT || 3001,
-    host: 'localhost'
+    host: '127.0.0.1'
 };
 
 // Cache de token
@@ -151,7 +151,7 @@ function consultarCPFAssertiva(cpf, token) {
                 try {
                     const response = JSON.parse(data);
                     
-                    console.log('📊 Resposta Assertiva:', { status: res.statusCode, cpf: cleanCpf, bruto: response });
+                    console.log('📊 Resposta Assertiva:', { status: res.statusCode, cpf: cleanCpf });
 
                     // Extração robusta do Localize v3
                     const cadastrais = response?.resposta?.dadosCadastrais || {};
