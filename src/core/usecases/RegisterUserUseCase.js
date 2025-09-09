@@ -1,15 +1,34 @@
-module.exports = function RegisterUserUseCase({ userRepository, hashPassword }){
+const { normalizeEmail } = require('../../shared/utils/email-normalize');
+
+module.exports = function RegisterUserUseCase({ userRepository, passwordHasher }){
   return {
-    async execute({ name, email, password }){
+    async execute({ fullName, email, password, role, timezone, schedulingEnabled }){
       const errors = [];
       if(!email) errors.push('email obrigatório');
       if(!password) errors.push('senha obrigatória');
       if(errors.length) return { ok:false, errors };
-      const exists = await userRepository.findByEmail(email);
+      const emailNorm = normalizeEmail(email);
+      const exists = await userRepository.findByEmail(emailNorm);
       if(exists) return { ok:false, errors:['email já cadastrado'] };
-      const user = { id: cryptoId(), name: name||'', email, passwordHash: await hashPassword(password) };
+      const now = new Date().toISOString();
+      const user = {
+        id: cryptoId(),
+        fullName: fullName||'',
+        email: emailNorm,
+        phone: '',
+        role: role || 'provider',
+        schedulingEnabled: Boolean(schedulingEnabled)||false,
+        timezone: timezone || 'America/Sao_Paulo',
+        status: 'active',
+        passwordHash: await passwordHasher.hash(password),
+        createdAt: now,
+        updatedAt: now,
+        lastLoginAt: null,
+        consent: null,
+        metadata: null
+      };
       const saved = await userRepository.save(user);
-      return { ok:true, user: { id:saved.id, name:saved.name, email:saved.email } };
+      return { ok:true, user: { id:saved.id, fullName:saved.fullName, email:saved.email, role:saved.role } };
     }
   };
 };

@@ -1,0 +1,22 @@
+[
+  {
+    "id": "e745d11e-98c7-4d2e-981f-df66348786c4",
+    "providerId": "ana",
+    "customer": {
+      "name": "Teste"
+    },
+    "startISO": "2025-09-09T11:30:00.000Z",
+    "endISO": "2025-09-09T11:40:00.000Z",
+    "status": "booked"
+  },
+  {
+    "id": "c1707a03-4022-457b-95e3-c9bda481d2fb",
+    "providerId": "ana",
+    "customer": {
+      "name": "Teste"
+    },
+    "startISO": "2025-09-10T11:30:00.000Z",
+    "endISO": "2025-09-10T11:40:00.000Z",
+    "status": "booked"
+  }
+]

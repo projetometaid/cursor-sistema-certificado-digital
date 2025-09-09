@@ -1,0 +1,36 @@
+[
+  {
+    "providerId": "ana",
+    "enabled": true,
+    "timezone": "America/Sao_Paulo",
+    "workingDays": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "shifts": [
+      {
+        "start": "08:30",
+        "end": "12:30"
+      },
+      {
+        "start": "13:30",
+        "end": "17:30"
+      }
+    ],
+    "slotDurationMinutes": 10,
+    "gapBetweenSlotsMinutes": 0,
+    "exceptions": {
+      "holidays": [],
+      "blocks": []
+    },
+    "maxConcurrentAppointments": 1,
+    "bookingWindowDays": 30
+  },
+  {
+    "providerId": "f698916e-6b9b-47a7-9b9d-a04fc1bc2497",
+    "enabled": true
+  }
+]

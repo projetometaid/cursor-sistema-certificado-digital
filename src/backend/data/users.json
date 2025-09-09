@@ -22,5 +22,33 @@
     "name": "Smoke",
     "email": "smoke_1757436318254@example.com",
     "passwordHash": "$2b$10$iYgQHeOemPH6pzBo/.mxXu9zvMUZapCihHoqHLZhA1iENUeKONqFa"
+  },
+  {
+    "id": "a58797de-330e-4e40-912a-e10cc4ec4fa7",
+    "name": "",
+    "email": "rbac_1757445672818@example.com",
+    "passwordHash": "$2b$10$1ROULPEBmhPE.doYWWU4b.UgyIVtOc3xYMhtJednAxSnaBfW5ONxi"
+  },
+  {
+    "id": "0806302f-cb51-4753-80b8-75759d9f26c2",
+    "name": "",
+    "email": "rbac_1757445695126@example.com",
+    "passwordHash": "$2b$10$ZYgGjTgcreFCnYABR.jZnO4pEHzFNXIv5h.Sk7I52vHOW81z1Q4bi"
+  },
+  {
+    "id": "f698916e-6b9b-47a7-9b9d-a04fc1bc2497",
+    "fullName": "RBAC Test",
+    "email": "rbac_1757445811984@example.com",
+    "phone": "",
+    "role": "provider",
+    "schedulingEnabled": true,
+    "timezone": "America/Sao_Paulo",
+    "status": "active",
+    "passwordHash": "$2b$10$QAS6DqvQacs1g4jPoxRzJuetFDlNvD.RkkSSBKU0TpL2/g7.IYx.q",
+    "createdAt": "2025-09-09T19:23:32.012Z",
+    "updatedAt": "2025-09-09T19:23:32.012Z",
+    "lastLoginAt": "2025-09-09T19:23:32.166Z",
+    "consent": null,
+    "metadata": null
   }
 ]

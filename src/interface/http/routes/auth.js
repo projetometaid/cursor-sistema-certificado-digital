@@ -1,7 +1,18 @@
 const { Router } = require('express');
-module.exports = function buildAuthRouter({ registerUser, loginUser }){
+const buildController = require('../controllers/AuthController');
+module.exports = function buildAuthRouter(container){
   const router = Router();
-  router.post('/register', async (req,res)=>{ const r = await registerUser.execute(req.body); if(!r.ok) return res.status(400).json(r); res.status(201).json(r); });
-  router.post('/login', async (req,res)=>{ const r = await loginUser.execute(req.body); if(!r.ok) return res.status(401).json(r); res.json(r); });
+  const ctrl = buildController(container);
+  router.post('/register', ctrl.register);
+  router.post('/login', ctrl.login);
+  router.post('/refresh', (req,res)=>{
+    const token = req.body?.refreshToken;
+    const payload = container.authTokenService.verifyRefresh(token||'');
+    if(!payload) return res.status(401).json({ ok:false, error:'unauthorized' });
+    const userId = payload.sub;
+    const role = req.body?.role || 'provider';
+    const accessToken = container.authTokenService.signAccess({ sub:userId, role });
+    res.json({ ok:true, accessToken });
+  });
   return router;
 };

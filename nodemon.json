@@ -1,0 +1,4 @@
+{
+  "watch": ["src/main", "src/interface", "src/core", "src/infrastructure"],
+  "ignore": ["src/backend/data/**", "tests/**", "dist/**", "node_modules/**"]
+}
