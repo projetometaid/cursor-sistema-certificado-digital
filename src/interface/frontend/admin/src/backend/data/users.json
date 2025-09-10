@@ -1,0 +1,18 @@
+[
+  {
+    "id": "2bc6c3d3-689e-425c-b29a-ed650151dc2c",
+    "fullName": "Leandro Albertini",
+    "email": "leandro.albertini@certificadocampinas.com.br",
+    "phone": "",
+    "role": "admin",
+    "schedulingEnabled": true,
+    "timezone": "America/Sao_Paulo",
+    "status": "active",
+    "passwordHash": "$2b$10$w7PWOdQ/fzAZL39v0n2a..5zqrq4IzWMu8zfV6ZbQ45voX0nuBUFG",
+    "createdAt": "2025-09-09T20:49:11.722Z",
+    "updatedAt": "2025-09-09T20:49:11.722Z",
+    "lastLoginAt": "2025-09-10T11:28:28.996Z",
+    "consent": null,
+    "metadata": null
+  }
+]

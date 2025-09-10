@@ -3,6 +3,13 @@ const { availabilityListSchema } = require('../validators/appointment.dto');
 
 module.exports = function SchedulesController(container){
   return {
+    async getPolicy(req, res){
+      try{
+        const providerId = req.params.providerId;
+        const policy = await container.schedulePolicyRepository.findByProviderId(providerId);
+        res.json({ ok:true, policy: policy || null });
+      } catch(err){ res.status(500).json({ ok:false, error:'server_error' }); }
+    },
     async setEnabled(req, res){
       try{
         const providerId = req.params.providerId;

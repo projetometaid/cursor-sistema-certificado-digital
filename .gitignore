@@ -3,6 +3,7 @@ config/.env
 .env
 .env.*
 dist/
+node_modules/
 coverage/
 .DS_Store
 .vscode/

@@ -1,0 +1,16 @@
+:root {
+  --color-bg: #F7F9FC;
+  --color-surface: #FFFFFF;
+  --color-text: #0F172A;
+  --color-primary: #4DA3FF;
+  --color-primary-hover: #2F8AF0;
+  --color-accent: #FFB35A;
+  --color-accent-hover: #FF9C29;
+  --radius-xl: 1rem;
+  --shadow-sm: 0 1px 2px rgba(16,24,40,0.05);
+  --shadow-md: 0 6px 16px rgba(16,24,40,0.08);
+}
+.btn-primary { background: var(--color-primary); color: white; border-radius: var(--radius-xl); }
+.btn-primary:hover { background: var(--color-primary-hover); }
+
+
