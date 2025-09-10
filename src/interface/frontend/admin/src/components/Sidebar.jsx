@@ -1,5 +1,5 @@
 import { useSidebar } from '../hooks/useSidebar.js';
-import { Home, Users, Calendar, Clock, LogOut, ChevronLeft, ChevronRight, Shield } from 'lucide-react';
+import { Home, Users, Calendar, Clock, LogOut, ChevronLeft, ChevronRight, Shield, Settings } from 'lucide-react';
 import NavItem from './NavItem.jsx';
 
 export default function Sidebar(){
@@ -18,6 +18,7 @@ export default function Sidebar(){
         <NavItem to="/admin/users" icon={<Users size={18}/>} label="Usuários" collapsed={collapsed} />
         <NavItem to="/admin/schedule" icon={<Calendar size={18}/>} label="Agenda" collapsed={collapsed} />
         <NavItem to="/admin/appointments" icon={<Clock size={18}/>} label="Agendamentos" collapsed={collapsed} />
+        <NavItem to="/admin/settings/pricing" icon={<Settings size={18}/>} label="Configuração" collapsed={collapsed} />
         <NavItem to="/admin/login" icon={<LogOut size={18}/>} label="Sair" collapsed={collapsed} />
       </nav>
     </aside>
