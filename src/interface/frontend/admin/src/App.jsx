@@ -4,6 +4,8 @@ import Index from './routes/index.jsx';
 import Login from './routes/login.jsx';
 import Users from './routes/users.jsx';
 import UserNew from './routes/users.new.jsx';
+import Certificates from './routes/certificates.jsx';
+import CertificateNew from './routes/certificates.new.jsx';
 import Schedule from './routes/schedule.jsx';
 import Appointments from './routes/appointments.jsx';
 import Sidebar from './components/Sidebar.jsx';
@@ -30,6 +32,8 @@ export default function App(){
             <Route path="" element={<Protected><Index /></Protected>} />
             <Route path="users" element={<Protected><Users /></Protected>} />
             <Route path="users/new" element={<Protected><UserNew /></Protected>} />
+            <Route path="certificates" element={<Protected><Certificates /></Protected>} />
+            <Route path="certificates/new" element={<Protected><CertificateNew /></Protected>} />
             <Route path="schedule" element={<Protected><Schedule /></Protected>} />
             <Route path="appointments" element={<Protected><Appointments /></Protected>} />
             <Route path="*" element={<Navigate to="/admin" replace />} />
