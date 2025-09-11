@@ -17,7 +17,7 @@ export default function Users(){
     <Card>
       <div className="flex items-center justify-between mb-3">
         <h2 className="font-semibold">Usuários</h2>
-        <Button onClick={()=> navigate('/admin/users/new')}>Novo usuário</Button>
+        <Button onClick={()=> navigate('/admin/settings/users/new')}>Novo usuário</Button>
       </div>
       {loading ? <div>Carregando…</div> : (
         <div className="overflow-x-auto">
