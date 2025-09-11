@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Card from '../components/Card.jsx';
 import { api } from '../lib/api.js';
@@ -9,6 +9,7 @@ export default function CertificateNew(){
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [result, setResult] = useState(null);
+  const [statusMsg, setStatusMsg] = useState('');
 
   // Campos comuns / e-CPF
   const [cpf, setCpf] = useState('');
@@ -25,6 +26,9 @@ export default function CertificateNew(){
   const [pis, setPis] = useState('');
   const [cei, setCei] = useState('');
   const [caepf, setCaepf] = useState('');
+  const [nomeAuto, setNomeAuto] = useState('');
+  const [biometriaOk, setBiometriaOk] = useState(null); // true | false | null
+  const [cnh, setCnh] = useState('');
 
   // Campos e-CNPJ específicos
   const [cnpj, setCnpj] = useState('');
@@ -38,6 +42,8 @@ export default function CertificateNew(){
   const [estadoPessoa, setEstadoPessoa] = useState('');
   const [pisJ, setPisJ] = useState('');
   const [ceiJ, setCeiJ] = useState('');
+  const [biometriaOkJ, setBiometriaOkJ] = useState(null);
+  const [razaoAuto, setRazaoAuto] = useState('');
 
   // Mask helpers
   const onlyDigits = (v='') => String(v).replace(/\D+/g,'');
@@ -79,6 +85,112 @@ export default function CertificateNew(){
     const d = onlyDigits(v).slice(0,14);
     return d.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
   };
+  const maskCNH = (v='') => onlyDigits(v).slice(0,11);
+  const toISODate = (ddmmyyyy='') => {
+    const d = onlyDigits(ddmmyyyy);
+    if(d.length!==8) return null;
+    const dd=d.slice(0,2), mm=d.slice(2,4), yy=d.slice(4);
+    return `${yy}-${mm}-${dd}`;
+  };
+  const cepDigits = (masked='') => onlyDigits(masked);
+
+  // e-CPF: trigger biometria on cpf input
+  useEffect(()=>{ (async()=>{
+    if(product!=='ECPF_A1') return;
+    setBiometriaOk(null);
+    const d = onlyDigits(cpf);
+    if(d.length!==11) return;
+    try{
+      const res = await fetch('http://127.0.0.1:3003/api/validar-biometria',{ method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify({ cpf: d }) });
+      const j = await res.json();
+      setBiometriaOk(!!j?.temBiometria);
+      setStatusMsg(j?.temBiometria? 'Biometria válida (videoconferência habilitada)':'Não existe biometria cadastrada');
+    }catch(_){ setBiometriaOk(null); }
+  })(); },[product, cpf]);
+
+  // e-CPF: after CPF, fetch DOB from Assertiva and validate CPF on Safeweb
+  useEffect(()=>{ (async()=>{
+    if(product!=='ECPF_A1') return;
+    const d = onlyDigits(cpf);
+    if(d.length!==11) return;
+    try{
+      // Assertiva → data de nascimento
+      const a = await fetch('http://127.0.0.1:3001/api/cpf',{ method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify({ cpf: d }) });
+      const aj = await a.json();
+      if(aj?.dataNascimento){
+        const [y,m,dd] = String(aj.dataNascimento).split('-');
+        setDataNascimento(`${dd}/${m}/${y}`);
+      }
+      // Safeweb consulta prévia CPF
+      const iso = toISODate(dataNascimento || `${aj?.dataNascimento?.slice(8,10)}/${aj?.dataNascimento?.slice(5,7)}/${aj?.dataNascimento?.slice(0,4)}`);
+      if(iso){
+        const s = await fetch('http://127.0.0.1:3003/api/consulta-previa-cpf',{ method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify({ cpf: d, dataNascimento: iso }) });
+        const sj = await s.json();
+        if(sj?.Mensagem){ setNomeAuto(sj.Mensagem); }
+      }
+    }catch(_){ /* ignore */ }
+  })(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ },[product, cpf]);
+
+  // e-CPF: CEP auto-preenche endereço via ViaCEP
+  useEffect(()=>{ (async()=>{
+    if(product!=='ECPF_A1') return;
+    const d = cepDigits(cep);
+    if(d.length!==8) return;
+    try{
+      const r = await fetch(`https://viacep.com.br/ws/${d}/json/`);
+      const j = await r.json();
+      if(!j?.erro){ setLogradouro(j.logradouro||''); setBairro(j.bairro||''); setCidade(j.localidade||''); setEstado(j.uf||''); }
+    }catch(_){ }
+  })(); },[product, cep]);
+
+  // e-CNPJ: biometria on cpfResponsavel
+  useEffect(()=>{ (async()=>{
+    if(product!=='ECNPJ_A1') return;
+    setBiometriaOkJ(null);
+    const d = onlyDigits(cpfResponsavel);
+    if(d.length!==11) return;
+    try{
+      const res = await fetch('http://127.0.0.1:3003/api/validar-biometria',{ method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify({ cpf: d }) });
+      const j = await res.json();
+      setBiometriaOkJ(!!j?.temBiometria);
+    }catch(_){ setBiometriaOkJ(null); }
+  })(); },[product, cpfResponsavel]);
+
+  // e-CNPJ: após CPF, obter DOB via Assertiva
+  useEffect(()=>{ (async()=>{
+    if(product!=='ECNPJ_A1') return;
+    const d = onlyDigits(cpfResponsavel);
+    if(d.length!==11) return;
+    try{
+      const a = await fetch('http://127.0.0.1:3001/api/cpf',{ method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify({ cpf: d }) });
+      const aj = await a.json();
+      if(aj?.dataNascimento){ const [y,m,dd] = String(aj.dataNascimento).split('-'); setDataNascimento(`${dd}/${m}/${y}`); }
+    }catch(_){ }
+  })(); },[product, cpfResponsavel]);
+
+  // e-CNPJ: após CNPJ, consulta prévia CNPJ e preenche dados da empresa e endereço
+  useEffect(()=>{ (async()=>{
+    if(product!=='ECNPJ_A1') return;
+    const dcnpj = onlyDigits(cnpj);
+    const dcpf = onlyDigits(cpfResponsavel);
+    const iso = toISODate(dataNascimento);
+    if(dcnpj.length!==14 || dcpf.length!==11 || !iso) return;
+    try{
+      // Safeweb consulta prévia CNPJ
+      const s = await fetch('http://127.0.0.1:3003/api/consulta-previa-cnpj',{ method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify({ cnpj: dcnpj, cpfResponsavel: dcpf, dataNascimento: iso }) });
+      await s.json();
+      // BrasilAPI empresa
+      const br = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${dcnpj}`);
+      const bj = await br.json();
+      setRazaoAuto(bj?.razao_social||'');
+      setCepPessoa((bj?.cep||'').replace(/\D+/g,'').replace(/(\d{2})(\d{3})(\d{1,3})/, '$1.$2-$3'));
+      setLogradouroPessoa(bj?.logradouro||'');
+      setNumeroPessoa(bj?.numero||'');
+      setBairroPessoa(bj?.bairro||'');
+      setCidadePessoa(bj?.municipio||'');
+      setEstadoPessoa(bj?.uf||'');
+    }catch(_){ }
+  })(); },[product, cnpj, cpfResponsavel, dataNascimento]);
 
   async function onSubmit(e){
     e.preventDefault(); setError(''); setLoading(true); setResult(null);
@@ -86,6 +198,8 @@ export default function CertificateNew(){
       if(product === 'ECPF_A1'){
         // Exclusividade CEI/CAEPF
         if(cei && caepf){ setLoading(false); setError('Informe apenas CEI ou CAEPF (não ambos)'); return; }
+        // CNH obrigatória se biometria negativa
+        if(biometriaOk===false && maskCNH(cnh).length!==11){ setLoading(false); setError('Informe a CNH (11 dígitos)'); return; }
         const body = { cpf, email, telefone, cep, numero, dataNascimento };
         const r = await api.request('/protocols/ecpf', { method:'POST', body });
         setLoading(false);
@@ -128,11 +242,26 @@ export default function CertificateNew(){
             <div>
               <label className="block text-sm mb-1" htmlFor="cpf">CPF</label>
               <input id="cpf" className="w-full font-mono" placeholder="___.___.___-__" value={cpf} onChange={e=>setCpf(maskCPF(e.target.value))} required />
+              {biometriaOk===true && <div className="text-green-600 text-xs mt-1">Biometria OK (videoconferência)</div>}
+              {biometriaOk===false && (
+                <div className="text-red-600 text-xs mt-1">Não existe biometria cadastrada.
+                  <div className="mt-2">
+                    <label className="block text-sm mb-1" htmlFor="cnh">CNH (obrigatório)</label>
+                    <input id="cnh" className="w-full font-mono" placeholder="___________" value={cnh} onChange={e=>setCnh(maskCNH(e.target.value))} />
+                  </div>
+                </div>
+              )}
             </div>
             <div>
               <label className="block text-sm mb-1" htmlFor="dataNascimento">Data de nascimento</label>
               <input id="dataNascimento" type="text" placeholder="__/__/____" className="w-full font-mono" value={dataNascimento} onChange={e=>setDataNascimento(maskDate(e.target.value))} required />
             </div>
+            {nomeAuto && (
+              <div className="md:col-span-2">
+                <label className="block text-sm mb-1" htmlFor="nomeAuto">Nome</label>
+                <input id="nomeAuto" className="w-full" value={nomeAuto} readOnly />
+              </div>
+            )}
             <div className="md:col-span-2 text-sm text-slate-600">Endereço</div>
             <div>
               <label className="block text-sm mb-1" htmlFor="cep">CEP</label>
