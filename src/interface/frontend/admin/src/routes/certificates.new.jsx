@@ -52,8 +52,10 @@ export default function CertificateNew(){
     return d.replace(/(\d{2})(\d{2})(\d{1,4})/, '$1/$2/$3');
   };
   const maskCEP = (v='') => {
-    const d = onlyDigits(v).slice(0,7); // solicitado 7
-    return d;
+    const d = onlyDigits(v).slice(0,8);
+    if(d.length<=2) return d;
+    if(d.length<=5) return d.replace(/(\d{2})(\d{1,3})/, '$1.$2');
+    return d.replace(/(\d{2})(\d{3})(\d{1,3})/, '$1.$2-$3');
   };
   const maskUF = (v='') => String(v).toUpperCase().slice(0,2);
   const maskPhone = (v='') => {
@@ -134,7 +136,7 @@ export default function CertificateNew(){
             <div className="md:col-span-2 text-sm text-slate-600">Endereço</div>
             <div>
               <label className="block text-sm mb-1" htmlFor="cep">CEP</label>
-              <input id="cep" className="w-full font-mono" placeholder="_______" value={cep} onChange={e=>setCep(maskCEP(e.target.value))} required />
+              <input id="cep" className="w-full font-mono" placeholder="__.___-___" value={cep} onChange={e=>setCep(maskCEP(e.target.value))} required />
             </div>
             <div>
               <label className="block text-sm mb-1" htmlFor="logradouro">Logradouro</label>
@@ -158,7 +160,7 @@ export default function CertificateNew(){
             </div>
             <div>
               <label className="block text-sm mb-1" htmlFor="estado">Estado</label>
-              <input id="estado" className="w-full font-mono" placeholder="__" value={estado} onChange={e=>setEstado(maskUF(e.target.value))} />
+              <input id="estado" className="w-full" value={estado} onChange={e=>setEstado(e.target.value)} />
             </div>
             <div className="md:col-span-2 text-sm text-slate-600">Contato</div>
             <div>
@@ -202,7 +204,7 @@ export default function CertificateNew(){
             <div className="md:col-span-2 text-sm text-slate-600">Endereço</div>
             <div>
               <label className="block text-sm mb-1" htmlFor="cepPessoa">CEP</label>
-              <input id="cepPessoa" className="w-full font-mono" placeholder="_______" value={cepPessoa} onChange={e=>setCepPessoa(maskCEP(e.target.value))} required />
+              <input id="cepPessoa" className="w-full font-mono" placeholder="__.___-___" value={cepPessoa} onChange={e=>setCepPessoa(maskCEP(e.target.value))} required />
             </div>
             <div>
               <label className="block text-sm mb-1" htmlFor="logradouroPessoa">Logradouro</label>
@@ -226,7 +228,7 @@ export default function CertificateNew(){
             </div>
             <div>
               <label className="block text-sm mb-1" htmlFor="estadoPessoa">Estado</label>
-              <input id="estadoPessoa" className="w-full font-mono" placeholder="__" value={estadoPessoa} onChange={e=>setEstadoPessoa(maskUF(e.target.value))} />
+              <input id="estadoPessoa" className="w-full" value={estadoPessoa} onChange={e=>setEstadoPessoa(e.target.value)} />
             </div>
             <div className="md:col-span-2 text-sm text-slate-600">Contato</div>
             <div>
