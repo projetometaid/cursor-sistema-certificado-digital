@@ -125,16 +125,16 @@ export default function CertificateNew(){
             <div className="md:col-span-2 text-slate-600 text-sm">Preencha os dados para gerar protocolo de e-CPF.</div>
             <div>
               <label className="block text-sm mb-1" htmlFor="cpf">CPF</label>
-              <input id="cpf" className="w-full" value={cpf} onChange={e=>setCpf(maskCPF(e.target.value))} required />
+              <input id="cpf" className="w-full font-mono" placeholder="___.___.___-__" value={cpf} onChange={e=>setCpf(maskCPF(e.target.value))} required />
             </div>
             <div>
               <label className="block text-sm mb-1" htmlFor="dataNascimento">Data de nascimento</label>
-              <input id="dataNascimento" type="text" placeholder="DD/MM/AAAA" className="w-full" value={dataNascimento} onChange={e=>setDataNascimento(maskDate(e.target.value))} required />
+              <input id="dataNascimento" type="text" placeholder="__/__/____" className="w-full font-mono" value={dataNascimento} onChange={e=>setDataNascimento(maskDate(e.target.value))} required />
             </div>
             <div className="md:col-span-2 text-sm text-slate-600">Endereço</div>
             <div>
               <label className="block text-sm mb-1" htmlFor="cep">CEP</label>
-              <input id="cep" className="w-full" value={cep} onChange={e=>setCep(maskCEP(e.target.value))} required />
+              <input id="cep" className="w-full font-mono" placeholder="_______" value={cep} onChange={e=>setCep(maskCEP(e.target.value))} required />
             </div>
             <div>
               <label className="block text-sm mb-1" htmlFor="logradouro">Logradouro</label>
@@ -158,12 +158,12 @@ export default function CertificateNew(){
             </div>
             <div>
               <label className="block text-sm mb-1" htmlFor="estado">Estado</label>
-              <input id="estado" className="w-full" value={estado} onChange={e=>setEstado(maskUF(e.target.value))} />
+              <input id="estado" className="w-full font-mono" placeholder="__" value={estado} onChange={e=>setEstado(maskUF(e.target.value))} />
             </div>
             <div className="md:col-span-2 text-sm text-slate-600">Contato</div>
             <div>
               <label className="block text-sm mb-1" htmlFor="telefone">Telefone</label>
-              <input id="telefone" className="w-full" value={telefone} onChange={e=>setTelefone(maskPhone(e.target.value))} required />
+              <input id="telefone" className="w-full font-mono" placeholder="(__) _____-____" value={telefone} onChange={e=>setTelefone(maskPhone(e.target.value))} required />
             </div>
             <div>
               <label className="block text-sm mb-1" htmlFor="email">E-mail</label>
@@ -172,15 +172,15 @@ export default function CertificateNew(){
             <div className="md:col-span-2 text-sm text-slate-600">Documentos complementares</div>
             <div>
               <label className="block text-sm mb-1" htmlFor="pis">PIS</label>
-              <input id="pis" className="w-full" value={pis} onChange={e=>setPis(maskPIS(e.target.value))} placeholder="xxx.xxxxx.xx.x" />
+              <input id="pis" className="w-full font-mono" value={pis} onChange={e=>setPis(maskPIS(e.target.value))} placeholder="___._____.__.__" />
             </div>
             <div>
               <label className="block text-sm mb-1" htmlFor="cei">CEI</label>
-              <input id="cei" className="w-full" value={cei} onChange={e=>setCei(maskCEI(e.target.value))} placeholder="xx.xxx.xxxxx/xx" />
+              <input id="cei" className="w-full font-mono" value={cei} onChange={e=>setCei(maskCEI(e.target.value))} placeholder="__.___ ._____/__" />
             </div>
             <div>
               <label className="block text-sm mb-1" htmlFor="caepf">CAEPF</label>
-              <input id="caepf" className="w-full" value={caepf} onChange={e=>setCaepf(maskCAEPF(e.target.value))} placeholder="xxx.xxx.xxx/xxx-xx" />
+              <input id="caepf" className="w-full font-mono" value={caepf} onChange={e=>setCaepf(maskCAEPF(e.target.value))} placeholder="___.___.___/___-__" />
             </div>
             <div className="md:col-span-2 text-xs text-slate-500">Informe apenas CEI ou CAEPF (um deles)</div>
           </div>
@@ -189,20 +189,20 @@ export default function CertificateNew(){
             <div className="md:col-span-2 text-slate-600 text-sm">Preencha os dados para gerar protocolo de e-CNPJ.</div>
             <div>
               <label className="block text-sm mb-1" htmlFor="cpfResponsavel">CPF</label>
-              <input id="cpfResponsavel" className="w-full" value={cpfResponsavel} onChange={e=>setCpfResponsavel(maskCPF(e.target.value))} required />
+              <input id="cpfResponsavel" className="w-full font-mono" placeholder="___.___.___-__" value={cpfResponsavel} onChange={e=>setCpfResponsavel(maskCPF(e.target.value))} required />
             </div>
             <div>
               <label className="block text-sm mb-1" htmlFor="dataNascimento2">Data de nascimento</label>
-              <input id="dataNascimento2" type="text" placeholder="DD/MM/AAAA" className="w-full" value={dataNascimento} onChange={e=>setDataNascimento(maskDate(e.target.value))} required />
+              <input id="dataNascimento2" type="text" placeholder="__/__/____" className="w-full font-mono" value={dataNascimento} onChange={e=>setDataNascimento(maskDate(e.target.value))} required />
             </div>
             <div>
               <label className="block text-sm mb-1" htmlFor="cnpj">CNPJ</label>
-              <input id="cnpj" className="w-full" value={cnpj} onChange={e=>setCnpj(maskCNPJ(e.target.value))} required />
+              <input id="cnpj" className="w-full font-mono" placeholder="__.___.___/____-__" value={cnpj} onChange={e=>setCnpj(maskCNPJ(e.target.value))} required />
             </div>
             <div className="md:col-span-2 text-sm text-slate-600">Endereço</div>
             <div>
               <label className="block text-sm mb-1" htmlFor="cepPessoa">CEP</label>
-              <input id="cepPessoa" className="w-full" value={cepPessoa} onChange={e=>setCepPessoa(maskCEP(e.target.value))} required />
+              <input id="cepPessoa" className="w-full font-mono" placeholder="_______" value={cepPessoa} onChange={e=>setCepPessoa(maskCEP(e.target.value))} required />
             </div>
             <div>
               <label className="block text-sm mb-1" htmlFor="logradouroPessoa">Logradouro</label>
@@ -226,12 +226,12 @@ export default function CertificateNew(){
             </div>
             <div>
               <label className="block text-sm mb-1" htmlFor="estadoPessoa">Estado</label>
-              <input id="estadoPessoa" className="w-full" value={estadoPessoa} onChange={e=>setEstadoPessoa(maskUF(e.target.value))} />
+              <input id="estadoPessoa" className="w-full font-mono" placeholder="__" value={estadoPessoa} onChange={e=>setEstadoPessoa(maskUF(e.target.value))} />
             </div>
             <div className="md:col-span-2 text-sm text-slate-600">Contato</div>
             <div>
               <label className="block text-sm mb-1" htmlFor="telefone2">Telefone</label>
-              <input id="telefone2" className="w-full" value={telefone} onChange={e=>setTelefone(maskPhone(e.target.value))} required />
+              <input id="telefone2" className="w-full font-mono" placeholder="(__) _____-____" value={telefone} onChange={e=>setTelefone(maskPhone(e.target.value))} required />
             </div>
             <div>
               <label className="block text-sm mb-1" htmlFor="email2">E-mail</label>
@@ -240,11 +240,11 @@ export default function CertificateNew(){
             <div className="md:col-span-2 text-sm text-slate-600">Documentos complementares</div>
             <div>
               <label className="block text-sm mb-1" htmlFor="pisJ">PIS</label>
-              <input id="pisJ" className="w-full" value={pisJ} onChange={e=>setPisJ(maskPIS(e.target.value))} placeholder="xxx.xxxxx.xx.x" />
+              <input id="pisJ" className="w-full font-mono" value={pisJ} onChange={e=>setPisJ(maskPIS(e.target.value))} placeholder="___._____.__.__" />
             </div>
             <div>
               <label className="block text-sm mb-1" htmlFor="ceiJ">CEI</label>
-              <input id="ceiJ" className="w-full" value={ceiJ} onChange={e=>setCeiJ(maskCEI(e.target.value))} placeholder="xx.xxx.xxxxx/xx" />
+              <input id="ceiJ" className="w-full font-mono" value={ceiJ} onChange={e=>setCeiJ(maskCEI(e.target.value))} placeholder="__.___ ._____/__" />
             </div>
           </div>
         )}
