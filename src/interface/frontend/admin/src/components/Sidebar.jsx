@@ -15,10 +15,13 @@ export default function Sidebar(){
       <nav className="p-2">
         <NavItem to="/admin" icon={<Home size={18}/>} label="Dashboard" collapsed={collapsed} />
         <NavItem to="/admin/certificates" icon={<Shield size={18}/>} label="Certificados" collapsed={collapsed} />
-        <NavItem to="/admin/users" icon={<Users size={18}/>} label="Usuários" collapsed={collapsed} />
-        <NavItem to="/admin/schedule" icon={<Calendar size={18}/>} label="Agenda" collapsed={collapsed} />
         <NavItem to="/admin/appointments" icon={<Clock size={18}/>} label="Agendamentos" collapsed={collapsed} />
-        <NavItem to="/admin/settings/pricing" icon={<Settings size={18}/>} label="Configuração" collapsed={collapsed} />
+        <div className="mt-2">
+          <div className={`px-3 text-xs uppercase tracking-wider text-slate-400 ${collapsed? 'hidden':''}`}>Configuração</div>
+          <NavItem to="/admin/settings/pricing" icon={<Settings size={18}/>} label="Tabela de preço" collapsed={collapsed} />
+          <NavItem to="/admin/settings/users" icon={<Users size={18}/>} label="Usuários" collapsed={collapsed} />
+          <NavItem to="/admin/settings/schedule" icon={<Calendar size={18}/>} label="Agenda" collapsed={collapsed} />
+        </div>
         <NavItem to="/admin/login" icon={<LogOut size={18}/>} label="Sair" collapsed={collapsed} />
       </nav>
     </aside>

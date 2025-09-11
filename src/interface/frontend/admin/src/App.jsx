@@ -31,12 +31,12 @@ export default function App(){
           <Routes>
             <Route path="login" element={<Login />} />
             <Route path="" element={<Protected><Index /></Protected>} />
-            <Route path="users" element={<Protected><Users /></Protected>} />
-            <Route path="users/new" element={<Protected><UserNew /></Protected>} />
+            <Route path="settings/users" element={<Protected><Users /></Protected>} />
+            <Route path="settings/users/new" element={<Protected><UserNew /></Protected>} />
             <Route path="certificates" element={<Protected><Certificates /></Protected>} />
             <Route path="certificates/new" element={<Protected><CertificateNew /></Protected>} />
             <Route path="settings/pricing" element={<Protected><Pricing /></Protected>} />
-            <Route path="schedule" element={<Protected><Schedule /></Protected>} />
+            <Route path="settings/schedule" element={<Protected><Schedule /></Protected>} />
             <Route path="appointments" element={<Protected><Appointments /></Protected>} />
             <Route path="*" element={<Navigate to="/admin" replace />} />
           </Routes>
