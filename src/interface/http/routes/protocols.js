@@ -122,7 +122,8 @@ module.exports = function buildProtocolsRouter() {
     cep: z.string().min(8),
     numero: z.union([z.string(), z.number()]),
     nome: z.string().min(1).optional(),
-    dataNascimento: z.string().optional()
+    dataNascimento: z.string().optional(),
+    cnh: z.string().optional()
   });
 
   router.post('/ecpf', async (req, res) => {
@@ -134,7 +135,11 @@ module.exports = function buildProtocolsRouter() {
       // 0) Verificar biometria primeiro
       const bio = await integrations.safeweb.validarBiometria(cpf);
       if (!bio?.temBiometria) {
-        return res.status(400).json({ ok: false, error: 'CPF sem biometria cadastrada no PSBio' });
+        const cnhDigits = String(req.body?.cnh||'').replace(/\D/g,'');
+        if (cnhDigits.length !== 11) {
+          return res.status(400).json({ ok: false, error: 'CPF sem biometria cadastrada no PSBio' });
+        }
+        // segue mesmo sem biometria, CNH informada
       }
 
       // 1) Data de nascimento: usa a enviada, senão busca Assertiva
@@ -275,14 +280,25 @@ module.exports = function buildProtocolsRouter() {
     email: z.string().email(),
     telefone: z.string().min(8),
     cepPessoa: z.string().min(8),
-    numeroPessoa: z.union([z.string(), z.number()])
+    numeroPessoa: z.union([z.string(), z.number()]),
+    cnh: z.string().optional(),
+    dataNascimento: z.string().optional()
   });
 
   router.post('/ecnpj', async (req, res) => {
     try {
       const parse = ecnpjSchema.safeParse(req.body||{});
       if(!parse.success) return res.status(400).json({ ok:false, error:'validation_error', details: parse.error.errors });
-      const { cnpj, cpfResponsavel, email, telefone, cepPessoa, numeroPessoa } = parse.data;
+      const { cnpj, cpfResponsavel, email, telefone, cepPessoa, numeroPessoa, dataNascimento } = parse.data;
+
+      // 0) Biometria do responsável (aceita CNH se não houver biometria)
+      const bio = await integrations.safeweb.validarBiometria(cpfResponsavel);
+      if (!bio?.temBiometria) {
+        const cnhDigits = String(req.body?.cnh||'').replace(/\D/g,'');
+        if (cnhDigits.length !== 11) {
+          return res.status(400).json({ ok: false, error: 'CPF sem biometria cadastrada no PSBio' });
+        }
+      }
 
       // 1) Dados da empresa (Provider consolidado: ReceitaWS → BrasilAPI)
       const { consultarCNPJ } = require('../../../infrastructure/integrations/externos/cnpjProvider');
@@ -296,15 +312,36 @@ module.exports = function buildProtocolsRouter() {
       if (!cpfResponsavel) {
         return res.status(400).json({ ok: false, error: 'cpfResponsavel é obrigatório para consulta prévia' });
       }
-      const a = await integrations.assertiva.consultarCPF(cpfResponsavel);
-      if (!a?.success || !a?.dataNascimento) {
-        return res.status(400).json({ ok: false, error: 'Data de nascimento do responsável não encontrada na Assertiva' });
+      // Usa data enviada se disponível; caso contrário tenta Assertiva
+      let dobISO = null;
+      if (dataNascimento) {
+        const raw = String(dataNascimento);
+        const digits = raw.replace(/\D/g, '');
+        if (digits.length === 8) {
+          const dd = digits.slice(0, 2), mm = digits.slice(2, 4), yyyy = digits.slice(4);
+          dobISO = `${yyyy}-${mm}-${dd}`;
+        } else if (raw.includes('-')) {
+          dobISO = raw.split('T')[0];
+        } else if (raw.includes('/')) {
+          const [d, m, y] = raw.split('/'); dobISO = `${y}-${m}-${d}`;
+        }
+      }
+      if (!dobISO) {
+        try {
+          const a = await integrations.assertiva.consultarCPF(cpfResponsavel);
+          if (a?.success && a?.dataNascimento) {
+            dobISO = a.dataNascimento; // YYYY-MM-DD
+          }
+        } catch (_) { /* ignora erro de Assertiva */ }
+      }
+      if (!dobISO) {
+        return res.status(400).json({ ok: false, error: 'Data de nascimento do responsável é obrigatória' });
       }
 
       // 3) Safeweb → validações (CPF e CNPJ)
-      const cpfOk = await integrations.safeweb.validarCPF(cpfResponsavel, a.dataNascimento);
+      const cpfOk = await integrations.safeweb.validarCPF(cpfResponsavel, dobISO);
       if (!cpfOk?.valido) return res.status(400).json({ ok: false, error: 'CPF responsável inválido na RFB' });
-      const cnpjOk = await integrations.safeweb.validarCNPJ(cnpj, cpfResponsavel, a.dataNascimento);
+      const cnpjOk = await integrations.safeweb.validarCNPJ(cnpj, cpfResponsavel, dobISO);
       if (!cnpjOk?.representanteLegal) {
         return res.status(400).json({ ok: false, error: 'CPF não é representante legal na RFB' });
       }
@@ -318,7 +355,7 @@ module.exports = function buildProtocolsRouter() {
         fantasia: empresa?.fantasia,
         cpfResponsavel,
         nomeResponsavel: cpfOk?.nome,
-        dataNascimentoISO: a.dataNascimento,
+        dataNascimentoISO: dobISO,
         email: email || empresa?.email || 'contato@empresa.com',
         telefone,
         address: addrMap

@@ -11,6 +11,8 @@ const buildSchedulesRouter = require('../interface/http/routes/schedules');
 const buildAppointmentsRouter = require('../interface/http/routes/appointments');
 const buildHoldsRouter = require('../interface/http/routes/holds');
 const buildUsersRouter = require('../interface/http/routes/users');
+const buildCertificatesRouter = require('../interface/http/routes/certificates');
+const buildIntegrationsRouter = require('../interface/http/routes/integrations');
 const container = buildContainer();
 const app = express();
 app.use(helmet());
@@ -27,6 +29,8 @@ app.use('/schedules', buildSchedulesRouter(container));
 app.use('/appointments', buildAppointmentsRouter(container));
 app.use('/holds', buildHoldsRouter(container));
 app.use('/users', buildUsersRouter(container));
+app.use('/certificates', buildCertificatesRouter(container));
+app.use('/integrations', buildIntegrationsRouter());
 // Serve admin static
 const path = require('path');
 const expressStatic = require('express');
